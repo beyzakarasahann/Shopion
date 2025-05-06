@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" class="transition duration-300">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopion – Everything You Need</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  {% load static %}
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#C084FC',  // Violet color for primary
+            secondary: '#6366F1',  // Indigo color for secondary
+            accent: '#E0E7FF',  // Light indigo color for accents
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-white font-sans transition duration-300">
+
+  <!-- 🌐 NAVBAR -->
+  <header class="shadow-md sticky top-0 z-50 bg-white dark:bg-gray-800">
+    <div class="max-w-screen-xl mx-auto flex items-center justify-between p-4">
+      <!-- Logo -->
+      <a href="/" class="text-2xl font-bold text-primary cursor-pointer">Shopion</a>
+
+
+
+
+      <!-- Search bar with left icon and shadow -->
+<div class="relative w-full max-w-md mx-4">
+  <form action="/products" method="GET">
+    <input
+      type="text"
+      name="search"
+      placeholder="Search products..."
+      class="w-full pl-12 pr-4 py-3 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary transition duration-300 shadow-lg"
+    />
+    <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-900 dark:text-white bg-white dark:bg-gray-700 p-2 rounded-full transition-all duration-300 ease-in-out">
+      <i class="fas fa-search"></i> <!-- Arama ikonu -->
+    </span>
+  </form>
+</div>
+
+
+
+      <!-- Icons -->
+      <div class="flex items-center gap-4">
+        <!-- 🌙 DARK MODE TOGGLE ICON -->
+        <button id="toggleDark" class="text-xl focus:outline-none transition">
+          <i id="themeIcon" class="fas fa-moon text-gray-700 dark:text-white"></i>
+        </button>
+
+        <!-- LOGIN / REGISTER -->
+        <div class="flex items-center gap-4">
+          <a href="/login" class="text-sm text-gray-700 dark:text-gray-200 hover:text-primary">Login</a>
+          <a href="/register" class="text-sm bg-primary text-white px-3 py-1 rounded hover:bg-[#a855f7] transition">Sign Up</a>
+        </div>
+
+        <!-- CART ICON -->
+        <a href="/cart" class="relative">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.2 6h12.4M10 21h0M17 21h0" />
+          </svg>
+          <span id="cart-count" class="absolute -top-2 -right-2 text-xs bg-red-500 text-white px-1 rounded-full">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 💜 HERO AREA -->
+  <section class="bg-gradient-to-r from-indigo-200 to-violet-200 dark:from-gray-800 dark:to-gray-900 text-center py-20 px-4">
+    <h2 class="text-4xl font-bold mb-2">Everything You Need, In One Place</h2>
+    <p class="text-lg text-gray-700 dark:text-gray-300">New arrivals every day. Discover great deals now.</p>
+    <a href="/products" class="mt-6 inline-block bg-primary hover:bg-[#A855F7] text-white px-6 py-3 rounded-lg shadow-md transition">
+      Start Shopping
+    </a>
+  </section>
+
+  {% block content %}
+  {% endblock %}
+
+  <!-- 🛍️ FOOTER -->
+  <footer class="bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 text-sm mt-16 pt-12 pb-8">
+    <div class="max-w-screen-xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+
+      <!-- SHOPION -->
+      <div>
+        <h4 class="font-semibold text-lg text-primary mb-4">Shopion</h4>
+        <p>Your one-stop online shop for everything you love! Discover, click, and enjoy.</p>
+      </div>
+
+      <!-- SUPPORT -->
+      <div>
+        <h4 class="font-semibold text-lg mb-4">Support</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-primary transition">Help Center</a></li>
+          <li><a href="#" class="hover:text-primary transition">Return Policy</a></li>
+          <li><a href="#" class="hover:text-primary transition">Track Your Order</a></li>
+          <li><a href="#" class="hover:text-primary transition">FAQ</a></li>
+        </ul>
+      </div>
+
+      <!-- QUICK LINKS -->
+      <div>
+        <h4 class="font-semibold text-lg mb-4">Quick Links</h4>
+        <ul class="space-y-2">
+          <li><a href="/" class="hover:text-primary transition">Home</a></li>
+          <li><a href="/products" class="hover:text-primary transition">Products</a></li>
+          <li><a href="/cart" class="hover:text-primary transition">My Cart</a></li>
+          <li><a href="/login" class="hover:text-primary transition">Login</a></li>
+        </ul>
+      </div>
+
+      <!-- SOCIAL MEDIA -->
+      <div>
+        <h4 class="font-semibold text-lg mb-4">Follow Us</h4>
+        <div class="flex space-x-4">
+          <a href="#" class="hover:text-primary"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="hover:text-primary"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="hover:text-primary"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="hover:text-primary"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM SECTION -->
+    <div class="border-t border-gray-300 dark:border-gray-700 mt-8 pt-6 text-center text-xs">
+      © 2025 <span class="font-semibold text-primary">Shopion</span>. All rights reserved.
+      <div class="space-x-4 mt-2">
+        <a href="#" class="hover:text-primary transition">Privacy</a>
+        <a href="#" class="hover:text-primary transition">Terms</a>
+        <a href="#" class="hover:text-primary transition">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const toggleBtn = document.getElementById("toggleDark");
+    const themeIcon = document.getElementById("themeIcon");
+
+    toggleBtn.addEventListener("click", () => {
+      document.documentElement.classList.toggle("dark");
+      if (document.documentElement.classList.contains("dark")) {
+        themeIcon.classList.replace("fa-moon", "fa-sun");
+      } else {
+        themeIcon.classList.replace("fa-sun", "fa-moon");
+      }
+    });
+  </script>
+
+</body>
+</html>
+
