@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product, Cart, CartItem
+from .models import Product
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from .models import Product
