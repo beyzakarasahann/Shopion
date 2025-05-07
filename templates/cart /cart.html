@@ -1,0 +1,27 @@
+<!-- cart/cart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+</head>
+<body>
+    <h1>Your Shopping Cart</h1>
+
+    <ul>
+        {% for item in cart_items %}
+            <li>
+                {{ item.product.name }} - {{ item.quantity }} x {{ item.product.price }} TL
+                <a href="{% url 'remove_from_cart' product_id=item.product.id %}">Remove</a>
+            </li>
+        {% empty %}
+            <li>Your cart is empty.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Total Price: {{ total_price }} TL</h2>
+
+    <a href="{% url 'add_to_cart' product_id=product.id %}">Add Product to Cart</a>
+</body>
+</html>

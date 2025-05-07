@@ -16,14 +16,15 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path ,include
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('products/', include('products.urls')),
-    path('', include('products.urls')),
-    path('cart/', include('cart.urls')),
-
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('products/', include('products.urls')),  # Ürünlerle ilgili URL'ler
+    path('', views.home, name='home') ,  # Kök URL, ürünler sayfasına yönlendirme
+    path('cart/', include(('cart.urls', 'cart'), namespace='cart')),
+                  # Sepetle ilgili URL'ler
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
