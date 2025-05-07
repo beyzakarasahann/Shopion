@@ -5,12 +5,16 @@ from django.db import models
 from django.contrib.auth.models import User
 from products.models import Product
 
+
 # Kullanıcının Sepeti
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)  # NULL ve blank=True ekledik
 
     def __str__(self):
-        return f"{self.user.username}'s Cart"
+        if self.user:
+            return f"{self.user.username}'s Cart"
+        else:
+            return "Anonymous Cart"  # Anonim kullanıcı için farklı bir ifade
 
 # Sepet öğesi (Sepetteki her bir ürün)
 class CartItem(models.Model):
@@ -23,7 +27,6 @@ class CartItem(models.Model):
 
     def get_total_price(self):
         return self.product.price * self.quantity
-
 # Sepeti göster
 def cart_view(request):
     # Kullanıcının sepetini al veya oluştur
@@ -39,8 +42,7 @@ def cart_view(request):
     }
     return render(request, 'cart/cart.html', context)
 
-# Ürünü sepete ekle
-@login_required
+
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
