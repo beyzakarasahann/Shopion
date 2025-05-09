@@ -30,3 +30,5 @@ urlpatterns = [
     path('', views.home, name='home'),  # Kök URL, ürünler sayfasına yönlendirme
     path('cart/', include('cart.urls', namespace='cart')),  # Sepetle ilgili URL'ler
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
