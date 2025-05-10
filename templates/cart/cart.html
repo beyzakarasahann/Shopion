@@ -3,26 +3,57 @@
 {% block content %}
   <!-- 🛒 CART CONTENT -->
   <div class="max-w-screen-xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-    <!-- 🧾 Ürünler (Sol) -->
-    <div class="md:col-span-2 space-y-6" id="cart-items">
-      <!-- Sepet öğeleri burada görünecek -->
-      {% for item in cart_items %}
-        <div class="flex justify-between p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow">
-          <div>
-            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-20 h-20 object-contain rounded">
-            <div>
-              <h3 class="font-semibold">{{ item.product.name }}</h3>
-              <p>₺{{ item.get_total_price }}</p>
-            </div>
-          </div>
-          <div>
-            <a href="{% url 'cart:remove_from_cart' product_id=item.product.id %}" class="text-red-500">Remove</a>
-          </div>
+   <!-- 🧾 Ürün Kartları - Sol Alan -->
+<div class="md:col-span-2 space-y-4">
+  {% for item in cart_items %}
+  <div class="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow">
+
+    <!-- Sol: Görsel + Bilgiler -->
+    <div class="flex items-center gap-4">
+      <input type="checkbox" class="w-5 h-5 accent-primary"
+       checked
+       onchange="syncCheckState({{ item.product.id }}, this.checked)">
+
+      <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-20 h-20 object-contain rounded bg-white">
+
+      <div>
+        <h3 class="font-semibold text-base line-clamp-2">{{ item.product.name }}</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">₺{{ item.get_total_price }}</p>
+
+        <!-- Miktar Ayarlama -->
+        <div class="flex items-center gap-2 mt-2">
+          <form action="{% url 'cart:decrease_quantity' item.product.id %}" method="POST">
+  {% csrf_token %}
+  <button
+    class="w-8 h-8 bg-primary text-white rounded-full hover:bg-[#a855f7] transition"
+    id="decrease-btn-{{ item.product.id }}"
+  >
+    <i class="fas fa-minus"></i>
+  </button>
+</form>
+
+          </form>
+          <span class="w-8 text-center font-medium text-lg">{{ item.quantity }}</span>
+          <form action="{% url 'cart:increase_quantity' item.product.id %}" method="POST">{% csrf_token %}
+            <button class="w-8 h-8 bg-primary text-white rounded-full hover:bg-[#a855f7] transition">
+              <i class="fas fa-plus"></i>
+            </button>
+          </form>
         </div>
-      {% empty %}
-        <p>Your cart is empty.</p>
-      {% endfor %}
+      </div>
     </div>
+
+    <!-- Sağ: Sil Butonu -->
+    <form action="{% url 'cart:remove_from_cart' item.product.id %}" method="POST">{% csrf_token %}
+      <button class="text-red-500 hover:text-red-700 text-sm"><i class="fas fa-trash"></i></button>
+    </form>
+
+  </div>
+  {% empty %}
+    <p class="text-center text-gray-500">Sepetiniz boş 🛒</p>
+  {% endfor %}
+</div>
+
 
     <!-- 💳 Sipariş Özeti (Sağ) -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 h-fit">
@@ -59,157 +90,22 @@
 {% endblock %}
 
 <script>
-  // Sepet sayısını güncelleme
-  function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    const counter = document.getElementById("cart-count");
-    if (counter) counter.textContent = totalCount;  // Sepetteki öğe sayısını göster
+  function syncCheckState(productId, isChecked) {
+    const hidden = document.getElementById("hidden-checkbox-" + productId);
+    if (hidden) hidden.checked = isChecked;
+  }
+  function syncCheckState(productId, isChecked) {
+    const hidden = document.getElementById("hidden-checkbox-" + productId);
+    const decBtn = document.getElementById("decrease-btn-" + productId);
+    const incBtn = document.getElementById("increase-btn-" + productId);
+
+    if (hidden) hidden.checked = isChecked;
+    if (decBtn) decBtn.disabled = !isChecked;
+    if (incBtn) incBtn.disabled = !isChecked;
   }
 
-  // Sayfa yüklendiğinde sepet sayısını güncelle
-  window.onload = function() {
-    updateCartCount();
-  };
 
-  // Sepeti görsel olarak render et
-  function renderCart() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const container = document.getElementById("cart-items");
-    const totalDisplay = document.getElementById("cart-total");
-    container.innerHTML = "";
-    let total = 0;
-
-    cart.forEach((item, index) => {
-      const price = parseFloat(item.price);
-      const quantity = item.quantity || 1;
-      const totalPrice = price * quantity;
-
-      const div = document.createElement("div");
-      div.className = "flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow";
-
-      div.innerHTML = `
-        <div class="flex items-center gap-4">
-          <input type="checkbox" class="item-checkbox w-5 h-5 accent-primary" checked>
-          <img src="${item.img}" class="w-20 h-20 object-contain rounded bg-white" alt="${item.name}">
-          <div>
-            <h3 class="font-semibold">${item.name}</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 price">₺${totalPrice.toFixed(2)}</p>
-            <div class="flex items-center gap-2 mt-2">
-              <button onclick="changeQuantity(${index}, -1)"
-                      class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center hover:bg-[#a855f7] transition">
-                <i class="fas fa-minus"></i>
-              </button>
-              <span class="w-8 text-center font-medium text-lg">${quantity}</span>
-              <button onclick="changeQuantity(${index}, 1)"
-                      class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center hover:bg-[#a855f7] transition">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        <button onclick="removeItem(${index})" class="text-red-500 hover:text-red-700">Remove</button>
-      `;
-      container.appendChild(div);
-
-      total += totalPrice;
-    });
-
-    updateSelectedTotal();
-  }
-
-  // Seçilen toplamı güncelle
-  function updateSelectedTotal() {
-    const checkboxes = document.querySelectorAll(".item-checkbox");
-    const prices = document.querySelectorAll(".price");
-    let subtotal = 0;
-
-    checkboxes.forEach((box, idx) => {
-      if (box.checked) {
-        const price = parseFloat(prices[idx].textContent.replace("₺", ""));
-        subtotal += price;
-      }
-    });
-
-    const shipping = subtotal > 0 ? 44.99 : 0;
-    const shippingDiscount = subtotal > 0 ? 44.99 : 0;
-    const total = subtotal + shipping - shippingDiscount;
-
-    document.getElementById("cart-total").textContent = `₺${total.toFixed(2)}`;
-    document.getElementById("summary-subtotal").textContent = `₺${subtotal.toFixed(2)}`;
-    document.getElementById("summary-total").textContent = `₺${total.toFixed(2)}`;
-
-    const discountRow = document.querySelector(".text-green-600");
-    if (discountRow) {
-      discountRow.style.display = subtotal > 0 ? "flex" : "none";
-    }
-  }
-
-  // Sepetten ürün çıkarma
-  function removeItem(index) {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.splice(index, 1);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    renderCart();
-    updateCartCount();
-    showToast("Ürün sepetten kaldırıldı"); // ✅ Burası
-  }
-
-  // Sepet sayısını güncelle
-  function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    const counter = document.getElementById("cart-count");
-    if (counter) counter.textContent = totalCount;
-  }
-
-  // Sepet güncelleme
-  function changeQuantity(index, change) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    cart[index].quantity = (cart[index].quantity || 1) + change;
-
-    // Eğer miktar 1'in altına düşerse ürünü kaldır
-    if (cart[index].quantity <= 0) {
-      cart.splice(index, 1);
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-    renderCart();
-    updateCartCount();
-    showToast("Sepet başarıyla güncellendi"); // ✅ Burayı ekle
-  }
-
-  function showToast(message) {
-    const toast = document.getElementById("toast-success");
-    const text = document.getElementById("toast-message");
-    text.textContent = message;
-    toast.classList.remove("hidden");
-
-    setTimeout(() => {
-      toast.classList.add("hidden");
-    }, 2000);
-  }
-
-  renderCart();
-  updateCartCount();
 </script>
 
-<!-- 🛑 Checkout Modal -->
-<div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-sm w-full shadow-lg text-center">
-    <div class="text-4xl text-orange-500 mb-2">⚠️</div>
-    <h2 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">TrendVerse Hesabınız Yok Mu?</h2>
-    <div class="text-sm text-gray-600 dark:text-gray-300 mb-4">Sipariş vermek için giriş yapmalısınız.</div>
-    <div class="flex justify-center gap-4">
-      <a href="login.html" class="px-4 py-2 bg-primary text-white rounded hover:bg-[#a855f7] transition">Giriş Yap</a>
-      <button onclick="closeModal()" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">Kapat</button>
-    </div>
-  </div>
-</div>
 
-<!-- ✅ Toast Bildirim Kutusu -->
-<div id="toast-success" class="fixed top-6 right-6 bg-green-500 text-white px-6 py-3 rounded shadow-lg flex items-center space-x-2 z-[9999] hidden">
-  <i class="fas fa-check text-xl"></i>
-  <span id="toast-message">Sepet başarıyla güncellendi</span>
-</div>
+

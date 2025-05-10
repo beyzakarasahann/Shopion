@@ -32,17 +32,15 @@
       </div>
 
       <!-- Hover'da çıkan Sepete Ekle -->
-      <div class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
-        <button
-          class="w-full bg-primary text-white py-2 rounded hover:bg-[#a855f7] transition add-to-cart text-sm"
-          data-name="{{ product.name }}"
-          data-price="{{ product.price }}"
-          data-image="{{ product.image.url }}"
-        >
-          Sepete Ekle
-        </button>
-      </div>
+<div class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
+  <a href="{% url 'cart:add_to_cart' product.id %}"
+     class="w-full block bg-primary text-white py-2 rounded text-center hover:bg-[#a855f7] transition text-sm">
+    Sepete Ekle
+  </a>
+</div>
+
     </div>
+
     {% empty %}
       <p class="text-center text-gray-500">Şu anda hiç ürün bulunmuyor.</p>
     {% endfor %}

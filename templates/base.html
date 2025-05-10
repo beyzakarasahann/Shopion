@@ -72,15 +72,17 @@
           <a href="/register" class="text-sm bg-primary text-white px-3 py-1 rounded hover:bg-[#a855f7] transition">Sign Up</a>
         </div>
 
-        <!-- CART ICON -->
 
-       <!-- CART ICON -->
+        <!-- CART ICON -->
 <a href="{% url 'cart:view_cart' %}" class="relative">
   <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.2 6h12.4M10 21h0M17 21h0" />
   </svg>
-  <span id="cart-count" class="absolute -top-2 -right-2 text-xs bg-red-500 text-white px-1 rounded-full">0</span>
+  <span id="cart-count" class="absolute -top-2 -right-2 text-xs bg-red-500 text-white px-1 rounded-full">
+    {{ cart_count|default:"0" }}
+  </span>
 </a>
+
 
       </div>
     </div>
@@ -158,6 +160,45 @@
         themeIcon.classList.replace("fa-sun", "fa-moon");
       }
     });
+
+
+
+     // 🛒 Sepete Ekle Butonları
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', () => {
+        const productId = button.dataset.id;
+
+        fetch("{% url 'cart:add_to_cart_ajax' %}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}',
+          },
+          body: `product_id=${productId}`
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            // Güncelle sayıyı
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+              cartCount.innerText = data.cart_count;
+            }
+
+            // Bildirim çıkar
+            showToast(data.message);
+          }
+        });
+      });
+    });
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = "fixed top-4 right-4 bg-green-500 text-white py-2 px-4 rounded shadow z-50";
+      toast.innerText = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
   </script>
 
 </body>
