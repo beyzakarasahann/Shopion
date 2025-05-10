@@ -1,111 +1,121 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <!-- 🛒 CART CONTENT -->
-  <div class="max-w-screen-xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-   <!-- 🧾 Ürün Kartları - Sol Alan -->
-<div class="md:col-span-2 space-y-4">
-  {% for item in cart_items %}
-  <div class="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow">
+<div class="max-w-screen-xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+  <!-- 🧾 Ürünler (Sol) -->
+  <div class="md:col-span-2 space-y-4">
 
-    <!-- Sol: Görsel + Bilgiler -->
-    <div class="flex items-center gap-4">
-      <input type="checkbox" class="w-5 h-5 accent-primary"
-       checked
-       onchange="syncCheckState({{ item.product.id }}, this.checked)">
+    {% for item in cart_items %}
+    <div class="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow">
 
-      <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-20 h-20 object-contain rounded bg-white">
-
-      <div>
-        <h3 class="font-semibold text-base line-clamp-2">{{ item.product.name }}</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">₺{{ item.get_total_price }}</p>
-
-        <!-- Miktar Ayarlama -->
-        <div class="flex items-center gap-2 mt-2">
-          <form action="{% url 'cart:decrease_quantity' item.product.id %}" method="POST">
+      <!-- Sol: Checkbox + Görsel + Bilgi -->
+      <div class="flex items-center gap-4">
+        <form method="POST" action="{% url 'cart:view_cart' %}" id="checkbox-form-{{ item.product.id }}">
   {% csrf_token %}
-  <button
-    class="w-8 h-8 bg-primary text-white rounded-full hover:bg-[#a855f7] transition"
-    id="decrease-btn-{{ item.product.id }}"
-  >
-    <i class="fas fa-minus"></i>
-  </button>
+  <input type="checkbox"
+         name="selected_items"
+         value="{{ item.product.id }}"
+         class="w-5 h-5 accent-primary"
+         onchange="this.form.submit()"
+         {% if item.product.id in selected_ids %}checked{% endif %}>
 </form>
 
-          </form>
-          <span class="w-8 text-center font-medium text-lg">{{ item.quantity }}</span>
-          <form action="{% url 'cart:increase_quantity' item.product.id %}" method="POST">{% csrf_token %}
-            <button class="w-8 h-8 bg-primary text-white rounded-full hover:bg-[#a855f7] transition">
-              <i class="fas fa-plus"></i>
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+             class="w-20 h-20 object-contain rounded bg-white">
 
-    <!-- Sağ: Sil Butonu -->
-    <form action="{% url 'cart:remove_from_cart' item.product.id %}" method="POST">{% csrf_token %}
-      <button class="text-red-500 hover:text-red-700 text-sm"><i class="fas fa-trash"></i></button>
-    </form>
+        <div>
+          <h3 class="font-semibold text-base line-clamp-2">{{ item.product.name }}</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">₺{{ item.get_total_price }}</p>
 
-  </div>
-  {% empty %}
-    <p class="text-center text-gray-500">Sepetiniz boş 🛒</p>
-  {% endfor %}
-</div>
-
-
-    <!-- 💳 Sipariş Özeti (Sağ) -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 h-fit">
-      <h2 class="text-xl font-bold mb-4">Sipariş Özeti</h2>
-      <div class="space-y-2 text-sm">
-        <div class="flex justify-between">
-          <span>Ürünlerin Toplamı</span>
-          <span>₺{{ total_price }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span>Kargo</span>
-          <span>₺44.99</span>
-        </div>
-        <div class="flex justify-between text-green-600 font-medium">
-          <span>Kargo Bedava İndirimi</span>
-          <span>-₺44.99</span>
-        </div>
-        <hr class="my-2 border-gray-300 dark:border-gray-600">
-        <div class="flex justify-between font-bold text-lg">
-          <span>Toplam</span>
-          <span>₺{{ total_price }}</span>
+          <!-- Miktar Ayarı -->
+          <div class="flex items-center gap-2 mt-2">
+            <form action="{% url 'cart:decrease_quantity' item.product.id %}" method="POST">
+              {% csrf_token %}
+              <button class="w-8 h-8 bg-primary text-white rounded-full hover:bg-[#a855f7] transition">
+                <i class="fas fa-minus"></i>
+              </button>
+            </form>
+            <span class="w-8 text-center font-medium text-lg">{{ item.quantity }}</span>
+            <form action="{% url 'cart:increase_quantity' item.product.id %}" method="POST">
+              {% csrf_token %}
+              <button class="w-8 h-8 bg-primary text-white rounded-full hover:bg-[#a855f7] transition">
+                <i class="fas fa-plus"></i>
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 
-      <div class="mt-6 space-y-3">
-        <button onclick="clearCart()" class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">Sepeti Temizle</button>
-        <a href="/products" class="w-full inline-block text-center bg-secondary text-white py-2 rounded hover:bg-indigo-600">Alışverişe Devam Et</a>
-        <button onclick="handleCheckout()" class="w-full inline-block text-center bg-primary text-white py-2 rounded hover:bg-[#a855f7]">
-          Sepeti Onayla
+      <!-- Sağ: Çöp Butonu -->
+      <form action="{% url 'cart:remove_from_cart' item.product.id %}" method="POST">
+        {% csrf_token %}
+        <button class="text-red-500 hover:text-red-700 text-sm">
+          <i class="fas fa-trash"></i>
         </button>
+      </form>
+
+    </div>
+    {% empty %}
+    <p class="text-center text-gray-500">Sepetiniz boş 🛒</p>
+    {% endfor %}
+  </div>
+
+  <!-- 💳 Sipariş Özeti -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 h-fit">
+    <h2 class="text-xl font-bold mb-4">Sipariş Özeti</h2>
+    <div class="space-y-2 text-sm">
+      <div class="flex justify-between">
+        <span>Ürünlerin Toplamı</span>
+        <span>₺{{ total_price }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span>Kargo</span>
+        <span>₺44.99</span>
+      </div>
+      <div class="flex justify-between text-green-600 font-medium">
+        <span>Kargo Bedava İndirimi</span>
+        <span>-₺44.99</span>
+      </div>
+      <hr class="my-2 border-gray-300 dark:border-gray-600">
+      <div class="flex justify-between font-bold text-lg">
+        <span>Toplam</span>
+        <span>₺{{ total_price }}</span>
       </div>
     </div>
+
+    <div class="mt-6 space-y-3">
+      <form action="{% url 'cart:clear_cart' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">
+          Sepeti Temizle
+        </button>
+      </form>
+      <a href="/products" class="w-full inline-block text-center bg-secondary text-white py-2 rounded hover:bg-indigo-600">
+        Alışverişe Devam Et
+      </a>
+      <button onclick="handleCheckout()" class="w-full inline-block text-center bg-primary text-white py-2 rounded hover:bg-[#a855f7]">
+        Sepeti Onayla
+      </button>
+    </div>
   </div>
+</div>
 {% endblock %}
 
+
+
 <script>
+  // Checkbox sadece elle kontrol edilsin
   function syncCheckState(productId, isChecked) {
+    // Checkbox durumu yalnızca sağ kutudaki fiyat hesaplaması için işlenir.
+    // Artık burada decBtn/incBtn yok! Sadece "hidden" ile ilgileniyoruz
     const hidden = document.getElementById("hidden-checkbox-" + productId);
-    if (hidden) hidden.checked = isChecked;
+    if (hidden) {
+      hidden.checked = isChecked;
+    }
   }
-  function syncCheckState(productId, isChecked) {
-    const hidden = document.getElementById("hidden-checkbox-" + productId);
-    const decBtn = document.getElementById("decrease-btn-" + productId);
-    const incBtn = document.getElementById("increase-btn-" + productId);
-
-    if (hidden) hidden.checked = isChecked;
-    if (decBtn) decBtn.disabled = !isChecked;
-    if (incBtn) incBtn.disabled = !isChecked;
-  }
-
-
 </script>
+
+
 
 
 

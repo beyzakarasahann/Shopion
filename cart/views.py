@@ -6,9 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 
-
 def view_cart(request):
-    # Kullanıcıya özel sepet al
     if request.user.is_authenticated:
         cart, _ = Cart.objects.get_or_create(user=request.user)
     else:
@@ -16,19 +14,21 @@ def view_cart(request):
 
     cart_items = CartItem.objects.filter(cart=cart)
 
-    # Sadece checkbox işaretli ürünler toplam fiyata eklensin
+    # POST geldiyse hangi ürünler işaretli öğreniyoruz
     if request.method == "POST":
-        selected_ids = request.POST.getlist("selected_items")
-        selected_ids = [int(pid) for pid in selected_ids]
-        selected_items = cart_items.filter(product__id__in=selected_ids)
-    else:
-        selected_items = cart_items  # ilk girişte hepsi dahil
+        selected_ids = list(map(int, request.POST.getlist("selected_items")))
+        request.session["selected_ids"] = selected_ids  # Session'a kaydet
+        return redirect("cart:view_cart")
 
-    total_price = sum(item.get_total_price() for item in selected_items)
+    # GET geldiğinde session'dan geri alıyoruz
+    selected_ids = request.session.get("selected_ids", [item.product.id for item in cart_items])
+
+    total_price = sum(item.get_total_price() for item in cart_items if item.product.id in selected_ids)
 
     return render(request, "cart/cart.html", {
         "cart_items": cart_items,
         "total_price": total_price,
+        "selected_ids": selected_ids
     })
 
 
@@ -141,3 +141,11 @@ def start_checkout(request):
             'selected_items': selected_items,
             'total_price': total_price,
         })
+
+
+
+def clear_cart(request):
+    user = request.user if request.user.is_authenticated else None
+    cart, _ = Cart.objects.get_or_create(user=user)
+    CartItem.objects.filter(cart=cart).delete()
+    return redirect('cart:view_cart')
