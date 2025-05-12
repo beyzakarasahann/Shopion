@@ -28,7 +28,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('products/', include('products.urls')),  # Ürünlerle ilgili URL'ler
     path('', views.home, name='home'),  # Kök URL, ürünler sayfasına yönlendirme
-    path('cart/', include('cart.urls', namespace='cart')),  # Sepetle ilgili URL'ler
+    path('cart/', include('cart.urls', namespace='cart')),
+    path('accounts/', include('accounts.urls')),
+    # Sepetle ilgili URL'ler
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

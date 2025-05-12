@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block title %}Giriş Yap – Shopion{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen px-4">
+  <div class="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-[-100px]">
+    <h2 class="text-2xl font-bold text-center text-primary">Giriş Yap</h2>
+
+    {% if messages %}
+      <ul class="text-sm text-red-500 list-disc list-inside">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium">Kullanıcı Adı</label>
+          <input type="text" name="username" required class="w-full mt-1 p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Şifre</label>
+          <input type="password" name="password" required class="w-full mt-1 p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+        </div>
+      </div>
+      <button type="submit" class="w-full mt-6 bg-primary text-white py-2 rounded hover:bg-[#a855f7] transition">
+        Giriş Yap
+      </button>
+    </form>
+
+    <p class="text-sm text-center">
+      Hesabın yok mu? <a href="{% url 'register' %}" class="text-primary hover:underline">Kayıt Ol</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
