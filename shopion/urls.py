@@ -19,15 +19,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from . import views
 from django.contrib import admin
 from django.urls import path, include
-from . import views
-
+from products.views import home
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('products/', include('products.urls')),  # Ürünlerle ilgili URL'ler
-    path('', views.home, name='home'),  # Kök URL, ürünler sayfasına yönlendirme
+    path('', home, name='home'),
     path('cart/', include('cart.urls', namespace='cart')),
     path('accounts/', include('accounts.urls')),
     # Sepetle ilgili URL'ler
