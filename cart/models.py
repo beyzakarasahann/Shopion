@@ -4,11 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.contrib.auth.models import User
 from products.models import Product
+from django.conf import settings
 
 
 # Kullanıcının Sepeti
 class Cart(models.Model):
-    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)  # NULL ve blank=True ekledik
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # NULL ve blank=True ekledik
 
     def __str__(self):
         if self.user:

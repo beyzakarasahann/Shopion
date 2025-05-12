@@ -1,0 +1,33 @@
+<div class="group relative bg-white dark:bg-gray-800 rounded-xl shadow-md p-3 w-[200px] h-[340px] mx-auto flex flex-col transition transform hover:scale-105">
+
+  <!-- Favori Kalp Butonu -->
+  <form method="POST" action="{% url 'toggle_favorite' product.id %}" class="absolute top-2 right-2 z-10">
+    {% csrf_token %}
+    <button type="submit" class="w-8 h-8 bg-white rounded-full shadow flex items-center justify-center">
+      {% if product in user.favorites.all %}
+        <i class="fas fa-heart text-orange-500"></i>
+      {% else %}
+        <i class="far fa-heart text-gray-500"></i>
+      {% endif %}
+    </button>
+  </form>
+
+  <!-- Ürün Görseli -->
+  <img src="{{ product.image.url }}"
+       class="w-full h-36 object-contain bg-white rounded"
+       alt="{{ product.name }}">
+
+  <!-- Ürün Bilgisi -->
+  <div class="mt-1 mb-1 flex-1 flex flex-col justify-start">
+    <h4 class="font-semibold text-sm line-clamp-2 leading-tight h-[2.3rem]  overflow-hidden">{{ product.name }}</h4>
+    <p class="text-purple-700 font-bold text-sm mt-1">₺{{ product.price }}</p>
+  </div>
+
+  <!-- Hover Sepete Ekle -->
+  <div class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
+    <a href="{% url 'cart:add_to_cart' product.id %}"
+       class="w-full block bg-primary text-white py-2 rounded text-center hover:bg-[#a855f7] transition text-sm">
+      Sepete Ekle
+    </a>
+  </div>
+</div>

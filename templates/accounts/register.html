@@ -1,10 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block title %}Kayıt Ol – ShopVerse{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen px-4">
+  <div class="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-[-100px]">
+    <h2 class="text-2xl font-bold text-center text-primary">Kayıt Ol</h2>
+
+    {% if messages %}
+      <ul class="text-sm text-red-500 list-disc list-inside">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+
+    <form method="POST">
+      {% csrf_token %}
+
+
+  {% if form.errors %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded text-sm mt-4">
+      <ul class="list-disc list-inside">
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium">Kullanıcı Adı</label>
+          <input type="text" name="username" value="{{ form.username.value|default:'' }}"  placeholder="ShopionUser"
+                 class="w-full mt-1 p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Email</label>
+          <input type="email" name="email" value="{{ form.email.value|default:'' }}"  placeholder="you@example.com"
+                 class="w-full mt-1 p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Şifre</label>
+          <input type="password" name="password1" placeholder="••••••••"
+                 class="w-full mt-1 p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Şifre Tekrar</label>
+          <input type="password" name="password2" placeholder="••••••••"
+                 class="w-full mt-1 p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+        </div>
+      </div>
+
+      <button type="submit" class="w-full mt-6 bg-primary text-white py-2 rounded hover:bg-[#a855f7] transition">
+        Hesap Oluştur
+      </button>
+    </form>
+
+    <p class="text-sm text-center">
+      Zaten bir hesabın var mı?
+      <a href="{% url 'login' %}" class="text-primary hover:underline">Giriş Yap</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

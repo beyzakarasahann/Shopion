@@ -17,33 +17,11 @@
   <h3 class="text-2xl font-bold mb-6 text-center">Today’s Top Picks</h3>
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-6">
 
-    {% for product in products %}
-    <div class="group relative bg-white dark:bg-gray-800 rounded-xl shadow-md p-3 w-[200px] h-[340px] mx-auto flex flex-col transition transform hover:scale-105">
-
-      <!-- Ürün Görseli -->
-      <img src="{{ product.image.url }}"
-           class="w-full h-36 object-contain bg-white rounded"
-           alt="{{ product.name }}">
-
-      <!-- Ürün Bilgisi -->
-      <div class="mt-1 mb-1 flex-1 flex flex-col justify-start">
-        <h4 class="font-semibold text-sm line-clamp-2 leading-tight h-[2.3rem]  overflow-hidden">{{ product.name }}</h4>
-        <p class="text-purple-700 font-bold text-sm mt-1">₺{{ product.price }}</p>
-      </div>
-
-      <!-- Hover'da çıkan Sepete Ekle -->
-<div class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
-  <a href="{% url 'cart:add_to_cart' product.id %}"
-     class="w-full block bg-primary text-white py-2 rounded text-center hover:bg-[#a855f7] transition text-sm">
-    Sepete Ekle
-  </a>
-</div>
-
-    </div>
-
-    {% empty %}
-      <p class="text-center text-gray-500">Şu anda hiç ürün bulunmuyor.</p>
-    {% endfor %}
+   {% for product in products %}
+  {% include 'partials/product_card.html' with product=product %}
+{% empty %}
+  <p class="text-center text-gray-500">Şu anda hiç ürün bulunmuyor.</p>
+{% endfor %}
 
   </div>
 </section>
