@@ -12,22 +12,28 @@
     </button>
   </form>
 
-  <!-- Ürün Görseli -->
-  <img src="{{ product.image.url }}"
-       class="w-full h-36 object-contain bg-white rounded"
-       alt="{{ product.name }}">
+  <!-- Tıklanabilir Alan: Ürün Görseli + Bilgisi -->
+  <a href="{% url 'product_detail' product.id %}" class="block flex-1">
+    <!-- Ürün Görseli -->
+    <img src="{{ product.image.url }}"
+         class="w-full h-36 object-contain bg-white rounded"
+         alt="{{ product.name }}">
 
-  <!-- Ürün Bilgisi -->
-  <div class="mt-1 mb-1 flex-1 flex flex-col justify-start">
-    <h4 class="font-semibold text-sm line-clamp-2 leading-tight h-[2.3rem]  overflow-hidden">{{ product.name }}</h4>
-    <p class="text-purple-700 font-bold text-sm mt-1">₺{{ product.price }}</p>
-  </div>
+    <!-- Ürün Bilgisi -->
+    <div class="mt-1 mb-1 flex flex-col justify-start">
+      <h4 class="font-semibold text-sm line-clamp-2 leading-tight h-[2.3rem] overflow-hidden text-gray-900 dark:text-white">
+        {{ product.name }}
+      </h4>
+      <p class="text-purple-700 font-bold text-sm mt-1">₺{{ product.price }}</p>
+    </div>
+  </a>
 
-  <!-- Hover Sepete Ekle -->
+  <!-- Hover'da Sepete Ekle -->
   <div class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
     <a href="{% url 'cart:add_to_cart' product.id %}"
        class="w-full block bg-primary text-white py-2 rounded text-center hover:bg-[#a855f7] transition text-sm">
       Sepete Ekle
     </a>
   </div>
+
 </div>

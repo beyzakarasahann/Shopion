@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} – ShopVerse{% endblock %}
+
+{% block content %}
+<main class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-12">
+
+  <!-- Görsel Kısmı -->
+  <div>
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="rounded-xl shadow-md w-full mb-4" />
+    <div class="flex space-x-2">
+      <img src="https://via.placeholder.com/80" class="w-16 h-16 rounded-md border-2 border-orange-500" />
+      <img src="https://via.placeholder.com/80" class="w-16 h-16 rounded-md" />
+      <img src="https://via.placeholder.com/80" class="w-16 h-16 rounded-md" />
+    </div>
+  </div>
+
+  <!-- Bilgi Kısmı -->
+  <div class="space-y-4">
+    <h1 class="text-2xl font-bold">{{ product.name }}</h1>
+
+    <!-- Favori Bilgisi -->
+    <div class="flex items-center space-x-4">
+      <p class="text-sm text-gray-500">Henüz yorum yazılmamış · 💖 {{ product.favorite_count }} Favori</p>
+
+      <!-- Favori Kalp Butonu -->
+      <form method="POST" action="{% url 'toggle_favorite' product.id %}">
+        {% csrf_token %}
+        <button type="submit" class="text-xl">
+          {% if product in user.favorites.all %}
+            <i class="fas fa-heart text-orange-500"></i>
+          {% else %}
+            <i class="far fa-heart text-gray-500"></i>
+          {% endif %}
+        </button>
+      </form>
+    </div>
+
+    <!-- Fiyat Bilgisi -->
+    <p class="text-3xl text-red-600 font-bold price">₺{{ product.price }}</p>
+    <p class="text-sm text-orange-600 installment">
+      Peşin Fiyatına 6 Taksit · ₺{{ product.price|divisibleby:6|floatformat:2 }}
+    </p>
+
+    <!-- Renk Bilgisi -->
+    <p class="text-sm font-semibold mt-4">Renk:
+      <span class="text-gray-600">{{ product.color }}</span>
+    </p>
+
+    <!-- Sepet & Şimdi Al -->
+    <div class="flex items-center gap-4 mt-4">
+      <form method="POST" action="{% url 'cart:add_to_cart' product.id %}">
+        {% csrf_token %}
+        <button type="submit" class="px-6 py-3 bg-orange-600 text-white rounded-md hover:bg-orange-700">
+          Sepete Ekle
+        </button>
+      </form>
+      <button class="px-6 py-3 border border-orange-600 text-orange-600 rounded-md hover:bg-orange-100">
+        Şimdi Al
+      </button>
+    </div>
+
+    <!-- Kargo Bilgisi -->
+    <p class="text-sm text-green-600 mt-4">⏱ 8 saat içinde sipariş verirsen kargoda!</p>
+    <p class="text-sm text-gray-600">Tahmini Teslim: <span class="font-medium">9 Mayıs Cuma</span></p>
+
+    <!-- Satıcı Bilgisi -->
+    <div class="mt-6 border rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
+      <p class="font-semibold">Satıcı:
+        <span class="text-blue-600">{{ product.seller }}</span>
+      </p>
+    </div>
+
+    <!-- Koleksiyon Butonu -->
+    <button class="mt-4 text-sm bg-gray-200 py-2 px-4 rounded hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600">
+      + Koleksiyona Ekle
+    </button>
+  </div>
+</main>
+{% endblock %}
+

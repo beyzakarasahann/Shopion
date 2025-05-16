@@ -20,12 +20,16 @@
          {% if item.product.id in selected_ids %}checked{% endif %}>
 </form>
 
+        <a href="{% url 'product_detail' item.product.id %}" class="flex items-center gap-3">
         <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
              class="w-20 h-20 object-contain rounded bg-white">
+          </a>
 
         <div>
+          <a href="{% url 'product_detail' item.product.id %}" class="flex items-center gap-3">
           <h3 class="font-semibold text-base line-clamp-2">{{ item.product.name }}</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">₺{{ item.get_total_price }}</p>
+            </a>
+           <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">₺{{ item.get_total_price }}</p>
 
           <!-- Miktar Ayarı -->
           <div class="flex items-center gap-2 mt-2">
