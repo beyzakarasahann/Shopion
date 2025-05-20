@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Destek Talebi Detayı{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-10 flex flex-col md:flex-row gap-6 px-4">
+
+  <!-- Sidebar -->
+  {% include "partials/accounts_sidebar.html" %}
+
+  <!-- Main Content -->
+  <div class="flex-1 bg-white/30 dark:bg-white/5 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-2xl shadow-xl p-8 transition-all duration-300">
+
+    <h1 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+      {{ ticket.subject }}
+    </h1>
+
+    <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">
+      Oluşturulma Tarihi: {{ ticket.created_at|date:"d.m.Y H:i" }}
+    </p>
+
+    <div class="mb-6">
+      <p class="font-semibold text-gray-700 dark:text-gray-200">Gönderilen Mesaj:</p>
+      <p class="text-sm text-gray-800 dark:text-white mt-1">{{ ticket.message }}</p>
+    </div>
+
+    {% if ticket.answer %}
+    <div class="p-4 bg-green-100 dark:bg-green-900/10 border-l-4 border-green-500 rounded">
+      <p class="font-semibold text-green-700 dark:text-green-300 mb-1">✔️ Admin Cevabı:</p>
+      <p class="text-sm text-gray-800 dark:text-white">{{ ticket.answer }}</p>
+      <p class="text-xs text-gray-500 mt-2">Yanıt tarihi: {{ ticket.answered_at|date:"d.m.Y H:i" }}</p>
+    </div>
+    {% else %}
+    <p class="text-yellow-600 dark:text-yellow-400">Henüz bu talebe cevap verilmedi.</p>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

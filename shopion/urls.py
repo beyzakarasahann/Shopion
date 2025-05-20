@@ -28,6 +28,8 @@ urlpatterns = [
     path('', home, name='home'),
     path('cart/', include('cart.urls', namespace='cart')),
     path('accounts/', include('accounts.urls')),
+    path('support/', include('support.urls')),
+
     # Sepetle ilgili URL'ler
 ]
 if settings.DEBUG:

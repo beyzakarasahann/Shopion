@@ -8,4 +8,6 @@ urlpatterns = [
     path('account/', views.account_view, name='account'),
     path('favorites/', views.favorites_view, name='favorites'),
     path('toggle-favorite/<int:product_id>/', views.toggle_favorite_view, name='toggle_favorite'),
+    path('account/', views.account_dashboard, name='account_dashboard'),
+
 ]

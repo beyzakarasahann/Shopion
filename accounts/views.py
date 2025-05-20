@@ -5,6 +5,8 @@ from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
 from products.models import Product
 from django.shortcuts import get_object_or_404
+from support.models import SupportTicket
+from support.forms import SupportTicketForm
 
 
 def login_view(request):
@@ -68,3 +70,11 @@ def toggle_favorite_view(request, product_id):
 def favorites_view(request):
     favorites = request.user.favorites.all()
     return render(request, 'accounts/favorites.html', {'favorites': favorites})
+
+
+@login_required
+def account_dashboard(request):
+    return render(request, 'accounts/account.html', {
+        "account_section": "accounts/welcome_inner.html"  # default boş içerik
+    })
+
