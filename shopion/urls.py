@@ -29,6 +29,7 @@ urlpatterns = [
     path('cart/', include('cart.urls', namespace='cart')),
     path('accounts/', include('accounts.urls')),
     path('support/', include('support.urls')),
+    path('blog/', include('blog.urls')),
 
     # Sepetle ilgili URL'ler
 ]

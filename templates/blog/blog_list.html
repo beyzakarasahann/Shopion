@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-4 grid grid-cols-1 lg:grid-cols-4 gap-10">
+
+  <!-- 📰 Makaleler ve Sayfalama Bloğu -->
+  <div class="lg:col-span-3 flex flex-col items-center">
+
+    <!-- Makale Kartları -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
+      {% for article in articles %}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden flex flex-col">
+          <img src="{{ article.image.url }}" alt="{{ article.title }}" class="w-full h-48 object-cover">
+          <div class="p-4 flex flex-col flex-grow">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+              <a href="{% url 'article_detail' article.pk %}" class="hover:underline">
+                {{ article.title|truncatechars:100 }}
+              </a>
+            </h2>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 mb-4">
+              {{ article.content|truncatechars:100 }}
+            </p>
+            <div class="mt-auto pt-2">
+              <a href="{% url 'article_detail' article.pk %}" class="text-sm text-primary hover:underline">
+                Devamını oku →
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- 📄 Sayfalama -->
+    <div class="mt-8">
+      <nav class="inline-flex space-x-1">
+        {% if articles.has_previous %}
+          <a href="?page={{ articles.previous_page_number }}" class="px-3 py-1 rounded border text-gray-600 dark:text-white hover:bg-primary hover:text-white">‹</a>
+        {% endif %}
+
+        {% for num in articles.paginator.page_range %}
+          {% if articles.number == num %}
+            <span class="px-3 py-1 bg-primary text-white border rounded">{{ num }}</span>
+          {% else %}
+            <a href="?page={{ num }}" class="px-3 py-1 border text-gray-600 dark:text-white hover:bg-primary hover:text-white rounded">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if articles.has_next %}
+          <a href="?page={{ articles.next_page_number }}" class="px-3 py-1 rounded border text-gray-600 dark:text-white hover:bg-primary hover:text-white">›</a>
+        {% endif %}
+      </nav>
+    </div>
+
+  </div>
+
+  <!-- 📎 Sağ Panel: Kategoriler ve Popüler -->
+  <aside class="space-y-8">
+
+    <!-- 📦 Kategoriler Kutusu -->
+    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-4">
+      <h3 class="text-lg font-bold text-primary mb-3 border-b border-gray-300 dark:border-gray-600 pb-1">Kategoriler</h3>
+      <ul class="space-y-2">
+        {% for category in categories %}
+          <li>
+            <a href="#" class="block px-3 py-1 rounded hover:bg-primary hover:text-white transition text-gray-800 dark:text-white">
+              {{ category.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- 💡 Popüler Başlıklar Kutusu -->
+    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-4">
+      <h3 class="text-lg font-bold text-primary mb-3 border-b border-gray-300 dark:border-gray-600 pb-1">Popüler Başlıklar</h3>
+      <ul class="space-y-2">
+        {% for article in popular_articles %}
+          <li>
+            <a href="{% url 'article_detail' article.pk %}" class="text-sm hover:text-primary text-gray-800 dark:text-gray-300 transition">
+              {{ article.title|truncatechars:50 }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  </aside>
+</div>
+{% endblock %}

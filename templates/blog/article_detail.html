@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-10 px-4">
+  <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">{{ article.title }}</h1>
+  <p class="text-sm text-gray-500 dark:text-gray-400">
+    Kategori: <span class="font-semibold">{{ article.category.name }}</span> |
+    Yazar: <span class="font-semibold">{{ article.author.username }}</span> |
+    Tarih: {{ article.created_at|date:"d M Y" }}
+  </p>
+
+  <div class="mt-6 prose dark:prose-invert">
+    {{ article.content|linebreaks }}
+  </div>
+
+  <div class="border-t border-gray-300 dark:border-gray-700 my-10"></div>
+
+  <!-- Yorumlar -->
+  <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Yorumlar</h2>
+  {% if comments %}
+    <ul class="space-y-4">
+      {% for comment in comments %}
+        <li class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+            <strong>{{ comment.user.username }}</strong> • {{ comment.created_at|date:"d M Y H:i" }}
+          </p>
+          <p class="text-gray-800 dark:text-white">{{ comment.content }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-gray-500 dark:text-gray-400">Henüz yorum yok. İlk sen olabilirsin! ✨</p>
+  {% endif %}
+
+  <div class="border-t border-gray-300 dark:border-gray-700 my-10"></div>
+
+  <!-- Yorum Ekle -->
+  {% if request.user.is_authenticated %}
+    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Yorum Yap</h3>
+    <form method="post" action="{% url 'add_comment' article.pk %}" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        {{ form.content.label_tag }}
+        {{ form.content }}
+      </div>
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        Gönder
+      </button>
+    </form>
+  {% else %}
+    <p class="text-gray-500 dark:text-gray-400">
+      Yorum yapabilmek için <a href="{% url 'login' %}" class="text-blue-600 hover:underline">giriş yap</a>malısın.
+    </p>
+  {% endif %}
+</div>
+{% endblock %}
