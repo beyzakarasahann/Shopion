@@ -45,3 +45,21 @@ def add_comment(request, pk):
             return redirect('article_detail', pk=article.pk)
 
     return redirect('article_detail', pk=article.pk)
+
+def category_articles(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    article_list = Article.objects.filter(category=category, is_approved=True).order_by('-created_at')
+
+    paginator = Paginator(article_list, 4)  # Her sayfada 4 makale
+    page = request.GET.get('page')
+    articles = paginator.get_page(page)
+
+    categories = Category.objects.all()
+    popular_articles = Article.objects.filter(is_approved=True).order_by('-id')[:5]
+
+    return render(request, 'blog/category_articles.html', {
+        'articles': articles,
+        'category': category,
+        'categories': categories,
+        'popular_articles': popular_articles,
+    })

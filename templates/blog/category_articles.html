@@ -3,11 +3,24 @@
 {% block content %}
 <div class="max-w-7xl mx-auto py-10 px-4 grid grid-cols-1 lg:grid-cols-4 gap-10">
 
+  <div class="lg:col-span-3 w-full mb-8">
+  {% if category %}
+    <div class="border-l-4 border-primary bg-gray-50 dark:bg-gray-800 px-6 py-4 rounded-lg shadow-sm hover:shadow-md transition">
+      <h2 class="text-xl lg:text-2xl font-semibold text-gray-800 dark:text-white flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        </svg>
+        {{ category.name }} kategorisindeki yazılar
+      </h2>
+    </div>
+  {% endif %}
+</div>
+
+
+  <!-- ✨ Aşağıya blog_list.html'deki her şeyin kopyasını yapıştır -->
+  <!-- Makaleler, Sayfalama, Sağ Panel... Hepsi aynı kalacak -->
 
   <!-- 📰 Makaleler ve Sayfalama Bloğu -->
   <div class="lg:col-span-3 flex flex-col items-center">
-
-    <!-- Makale Kartları -->
     <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
       {% for article in articles %}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden flex flex-col">
@@ -37,7 +50,6 @@
         {% if articles.has_previous %}
           <a href="?page={{ articles.previous_page_number }}" class="px-3 py-1 rounded border text-gray-600 dark:text-white hover:bg-primary hover:text-white">‹</a>
         {% endif %}
-
         {% for num in articles.paginator.page_range %}
           {% if articles.number == num %}
             <span class="px-3 py-1 bg-primary text-white border rounded">{{ num }}</span>
@@ -45,33 +57,28 @@
             <a href="?page={{ num }}" class="px-3 py-1 border text-gray-600 dark:text-white hover:bg-primary hover:text-white rounded">{{ num }}</a>
           {% endif %}
         {% endfor %}
-
         {% if articles.has_next %}
           <a href="?page={{ articles.next_page_number }}" class="px-3 py-1 rounded border text-gray-600 dark:text-white hover:bg-primary hover:text-white">›</a>
         {% endif %}
       </nav>
     </div>
-
   </div>
 
   <!-- 📎 Sağ Panel: Kategoriler ve Popüler -->
   <aside class="space-y-8">
-
-    <!-- 📦 Kategoriler Kutusu -->
     <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-4">
       <h3 class="text-lg font-bold text-primary mb-3 border-b border-gray-300 dark:border-gray-600 pb-1">Kategoriler</h3>
       <ul class="space-y-2">
         {% for category in categories %}
           <li>
             <a href="{% url 'category_articles' category.id %}" class="block px-3 py-1 rounded hover:bg-primary hover:text-white transition text-gray-800 dark:text-white">
-  {{ category.name }}
+              {{ category.name }}
             </a>
           </li>
         {% endfor %}
       </ul>
     </div>
 
-    <!-- 💡 Popüler Başlıklar Kutusu -->
     <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-4">
       <h3 class="text-lg font-bold text-primary mb-3 border-b border-gray-300 dark:border-gray-600 pb-1">Popüler Başlıklar</h3>
       <ul class="space-y-2">
@@ -84,7 +91,7 @@
         {% endfor %}
       </ul>
     </div>
-
   </aside>
+
 </div>
 {% endblock %}
